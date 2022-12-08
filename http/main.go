@@ -1,10 +1,17 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"strconv"
+)
 
 func main() {
-	err := http.ListenAndServe(":8080", http.FileServer(http.Dir(".")))
+	port := 8080
+	log.Printf("Starting at %d\n", port)
+
+	err := http.ListenAndServe(":"+strconv.Itoa(port), http.FileServer(http.Dir(".")))
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to start server: %s\n ", err.Error())
 	}
 }
