@@ -47,7 +47,7 @@ func main() {
 	dns.HandleFunc("cucho.", handleDNSRequest)
 
 	port := "53"
-	if os.Args[1] != "" {
+	if len(os.Args) > 1 && os.Args[1] != "" {
 		port = os.Args[1]
 	}
 
