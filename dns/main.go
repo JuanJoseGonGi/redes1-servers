@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
-	"strconv"
+	"os"
 
 	"github.com/miekg/dns"
 )
 
 var records = map[string]string{
-	"redes.cucho.": "192.168.0.2",
+	"redes.cucho.": "192.168.0.4",
 }
 
 func parseQuery(msg *dns.Msg) {
@@ -46,11 +46,14 @@ func main() {
 	// attach request handler func
 	dns.HandleFunc("cucho.", handleDNSRequest)
 
-	// start server
-	port := 5353
-	server := &dns.Server{Addr: ":" + strconv.Itoa(port), Net: "udp"}
+	port := "53"
+	if os.Args[1] != "" {
+		port = os.Args[1]
+	}
 
-	log.Printf("Starting at %d\n", port)
+	server := &dns.Server{Addr: ":" + port, Net: "udp"}
+
+	log.Printf("Starting at %s\n", port)
 
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("Failed to start server: %s\n ", err.Error())
