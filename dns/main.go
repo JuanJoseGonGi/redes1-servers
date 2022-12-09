@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/miekg/dns"
 )
@@ -53,26 +55,17 @@ func parseRecordsFile(filename string) error {
 		}
 	}()
 
-	var line string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
 
-	for {
-		_, err = fmt.Fscanf(file, "%s", &line)
-		if err != nil {
-			return fmt.Errorf("failed to read line: %w", err)
+		parts := strings.Split(line, " ")
+		if len(parts) == 2 {
+			records[parts[0]] = parts[1]
 		}
-
-		var name, ip string
-
-		_, err = fmt.Sscanf(line, "%s %s", &name, &ip)
-		if err != nil {
-			log.Printf("Failed to parse line: %s\n", line)
-			continue
-		}
-
-		records[name] = ip
-
-		log.Printf("Added record: %s -> %s", name, ip)
 	}
+
+	return nil
 }
 
 func main() {
